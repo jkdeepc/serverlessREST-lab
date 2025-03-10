@@ -35,6 +35,13 @@ export class RestAPIStack extends cdk.Stack {
       indexName: "roleIx",
       sortKey: { name: "roleName", type: dynamodb.AttributeType.STRING },
     });
+    const castTable = new dynamodb.Table(this, "CastTable", {
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      partitionKey: { name: "movieId", type: dynamodb.AttributeType.NUMBER },
+      sortKey: { name: "actorName", type: dynamodb.AttributeType.STRING },
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      tableName: "Cast",
+    });
     
     // Functions 
     
@@ -126,13 +133,24 @@ export class RestAPIStack extends cdk.Stack {
             },
           }
         );
-      
+        const getMovieWithCastFn = new lambdanode.NodejsFunction(this, "GetMovieWithCastFn", {
+          architecture: lambda.Architecture.ARM_64,
+          runtime: lambda.Runtime.NODEJS_18_X,
+          entry: `${__dirname}/../lambdas/getMovieWithCast.ts`, // 新文件路径
+          timeout: cdk.Duration.seconds(10),
+          environment: {
+            TABLE_NAME: moviesTable.tableName,       // 复用原环境变量
+            CAST_TABLE_NAME: castTable.tableName,    // 新增环境变量
+            REGION: 'eu-west-1',
+          },
+        });
         // Permissions 
         moviesTable.grantReadData(getMovieByIdFn)
         moviesTable.grantReadData(getAllMoviesFn)
         moviesTable.grantReadWriteData(newMovieFn)
         moviesTable.grantWriteData(deleteMovieFn)
         movieCastsTable.grantReadData(getMovieCastMembersFn)
+        castTable.grantReadData(getMovieWithCastFn)
          // REST API 
     const api = new apig.RestApi(this, "RestAPI", {
       description: "demo api",

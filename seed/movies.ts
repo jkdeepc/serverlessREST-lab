@@ -331,12 +331,16 @@ export const movieCasts: MovieCast[] = [
     actorName: "Joe Bloggs",
     roleName: "Male Character 1",
     roleDescription: "description of character 1",
+    title: "The Shawshank Redemption",
+    year: 1994,
   },
   {
-    movieId: 1234,
+    movieId: 2345,
     actorName: "Alice Broggs",
     roleName: "Female Character 1",
     roleDescription: "description of character 2",
+    title: "The Godfather",
+    year: 1972,
   },
   {
     movieId: 1234,
