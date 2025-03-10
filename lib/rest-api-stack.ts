@@ -56,6 +56,18 @@ export class RestAPIStack extends cdk.Stack {
         }
         );
         
+        const deleteMovieFn = new lambdanode.NodejsFunction(this, "DeleteMovieFn", {
+          architecture: lambda.Architecture.ARM_64,
+          runtime: lambda.Runtime.NODEJS_18_X,
+          entry: `${__dirname}/../lambdas/deleteMovie.ts`, // 路径根据实际结构调整
+          timeout: cdk.Duration.seconds(10),
+          memorySize: 128,
+          environment: {
+            TABLE_NAME: moviesTable.tableName,
+            REGION: "eu-west-1",
+          },
+        });
+
         new custom.AwsCustomResource(this, "moviesddbInitData", {
           onCreate: {
             service: "DynamoDB",
@@ -88,7 +100,8 @@ export class RestAPIStack extends cdk.Stack {
         moviesTable.grantReadData(getMovieByIdFn)
         moviesTable.grantReadData(getAllMoviesFn)
         moviesTable.grantReadWriteData(newMovieFn)
-
+        moviesTable.grantWriteData(deleteMovieFn)
+        
          // REST API 
     const api = new apig.RestApi(this, "RestAPI", {
       description: "demo api",
@@ -119,6 +132,10 @@ export class RestAPIStack extends cdk.Stack {
     specificMovieEndpoint.addMethod(
       "GET",
       new apig.LambdaIntegration(getMovieByIdFn, { proxy: true })
+    );
+    specificMovieEndpoint.addMethod(  // 新增 DELETE 方法
+      "DELETE",
+      new apig.LambdaIntegration(deleteMovieFn, { proxy: true })
     );
       }
     }
