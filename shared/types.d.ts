@@ -15,6 +15,13 @@ export type Movie =   {
   video: boolean,
   vote_average: number,
   vote_count: number
+  movieId: number;
+  actorName: string;
+  roleName: string;
+  roleDescription: string;
 }
-
- 
+export type MovieCastMemberQueryParams = {
+  movieId: string;
+  actorName?: string;
+  roleName?: string
+}

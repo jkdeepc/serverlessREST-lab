@@ -4,6 +4,9 @@
         "Movie": {
             "additionalProperties": false,
             "properties": {
+                "actorName": {
+                    "type": "string"
+                },
                 "adult": {
                     "type": "boolean"
                 },
@@ -17,6 +20,9 @@
                     "type": "array"
                 },
                 "id": {
+                    "type": "number"
+                },
+                "movieId": {
                     "type": "number"
                 },
                 "original_language": {
@@ -37,6 +43,12 @@
                 "release_date": {
                     "type": "string"
                 },
+                "roleDescription": {
+                    "type": "string"
+                },
+                "roleName": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 },
@@ -51,20 +63,42 @@
                 }
             },
             "required": [
+                "actorName",
                 "adult",
                 "backdrop_path",
                 "genre_ids",
                 "id",
+                "movieId",
                 "original_language",
                 "original_title",
                 "overview",
                 "popularity",
                 "poster_path",
                 "release_date",
+                "roleDescription",
+                "roleName",
                 "title",
                 "video",
                 "vote_average",
                 "vote_count"
+            ],
+            "type": "object"
+        },
+        "MovieCastMemberQueryParams": {
+            "additionalProperties": false,
+            "properties": {
+                "actorName": {
+                    "type": "string"
+                },
+                "movieId": {
+                    "type": "string"
+                },
+                "roleName": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "movieId"
             ],
             "type": "object"
         }
